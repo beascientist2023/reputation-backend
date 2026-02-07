@@ -6,3 +6,4 @@ tensorflow==2.20.0
 tf-keras
 pillow
 imagehash
+python-multipart
