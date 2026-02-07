@@ -7,3 +7,4 @@ tf-keras
 pillow
 imagehash
 python-multipart
+google-cloud-vision
