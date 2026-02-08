@@ -8,3 +8,4 @@ pillow
 imagehash
 python-multipart
 google-cloud-vision
+google-generativeai
