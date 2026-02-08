@@ -1,8 +1,19 @@
 import google.generativeai as genai
 import os
+import json
+from google.cloud import vision
+
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-3-pro-preview")
+# --- Cloud Vision setup ---
+credentials_info = json.loads(
+    os.getenv("GOOGLE_APPLICATION_CREDENTIALS_JSON")
+)
+
+vision_client = vision.ImageAnnotatorClient.from_service_account_info(
+    credentials_info
+)
     
 from fastapi import FastAPI, UploadFile, File
 from deepface import DeepFace
@@ -19,6 +30,25 @@ def test_gemini():
         "Explain non-consensual AI-generated content in simple words."
     )
     return {"gemini_response": response.text}
+
+@app.get("/test-vision")
+def test_vision():
+    image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Alberto_conversi_profile_pic.jpg/256px-Alberto_conversi_profile_pic.jpg"
+
+    image = vision.Image()
+    image.source.image_uri = image_url
+
+    response = vision_client.safe_search_detection(image=image)
+    safe = response.safe_search_annotation
+
+    return {
+        "adult": vision.Likelihood(safe.adult).name,
+        "racy": vision.Likelihood(safe.racy).name,
+        "violence": vision.Likelihood(safe.violence).name,
+        "medical": vision.Likelihood(safe.medical).name,
+        "spoof": vision.Likelihood(safe.spoof).name
+    }
+
 
 @app.get("/")
 def root():
