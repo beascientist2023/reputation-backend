@@ -3,13 +3,6 @@ import os
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-3-pro-preview")
-
-@app.get("/test-gemini")
-def test_gemini():
-    response = model.generate_content(
-        "Explain non-consensual AI-generated content in simple words."
-    )
-    return {"gemini_response": response.text}
     
 from fastapi import FastAPI, UploadFile, File
 from deepface import DeepFace
@@ -19,6 +12,13 @@ import tempfile
 import os
 
 app = FastAPI()
+
+@app.get("/test-gemini")
+def test_gemini():
+    response = model.generate_content(
+        "Explain non-consensual AI-generated content in simple words."
+    )
+    return {"gemini_response": response.text}
 
 @app.get("/")
 def root():
